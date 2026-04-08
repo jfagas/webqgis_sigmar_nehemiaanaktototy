@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="./resources/ol.css">
+        <link rel="stylesheet" href="resources/fontawesome-all.min.css">
+        <link href="resources/photon-geocoder-autocomplete.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="./resources/ol-layerswitcher.css">
+        <link rel="stylesheet" href="./resources/qgis2web.css">
+        <style>
+        :root {
+            color-scheme: dark;
+            color: #0c1f4d;
+            background: #eaf4ff;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        html, body {
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(150deg, #0b2f63 0%, #3e74c5 45%, #d8ecff 100%);
+            color: #0c1f4d;
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+
+        .page-shell {
+            max-width: 1380px;
+            margin: 0 auto;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        .hero {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .hero-copy {
+            max-width: 680px;
+            line-height: 1.75;
+            color: #eef6ff;
+            margin-top: 12px;
+            font-size: 1.05rem;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #a9d5ff;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2.4rem, 3vw, 4rem);
+            line-height: 1.05;
+            color: #ffffff;
+        }
+
+        .hero-card {
+            min-width: 280px;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow: 0 32px 80px rgba(3, 35, 92, 0.22);
+            border-radius: 28px;
+            padding: 28px;
+            backdrop-filter: blur(18px);
+            color: #f5fbff;
+        }
+
+        .hero-card h2 {
+            margin-top: 0;
+            font-size: 1.35rem;
+        }
+
+        .hero-card p {
+            margin: 0.8rem 0 0;
+            line-height: 1.7;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1.2fr 2fr;
+            gap: 22px;
+            align-items: start;
+            margin-bottom: 28px;
+        }
+
+        .info-panel {
+            display: grid;
+            gap: 18px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid rgba(29, 88, 171, 0.14);
+            border-radius: 26px;
+            padding: 24px;
+            box-shadow: 0 20px 50px rgba(31, 72, 137, 0.12);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #0f2e5f;
+            font-size: 1.15rem;
+        }
+
+        .card p,
+        .card li,
+        .card dd {
+            color: #2e4063;
+            line-height: 1.7;
+        }
+
+        .card ul {
+            padding-left: 1rem;
+            margin: 0.75rem 0 0;
+            list-style: disc;
+        }
+
+        .card dl {
+            margin: 0.8rem 0 0;
+        }
+
+        .card dt {
+            font-weight: 700;
+            margin-top: 12px;
+            color: #173363;
+        }
+
+        .card dd {
+            margin-left: 0;
+        }
+
+        .card.accent {
+            background: rgba(46, 92, 186, 0.08);
+            border-color: rgba(46, 92, 186, 0.24);
+        }
+
+        .map-frame {
+            border-radius: 34px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 40px 80px rgba(15, 35, 80, 0.18);
+            min-height: 72vh;
+            background: linear-gradient(180deg, rgba(18,91,175,0.12) 0%, rgba(255,255,255,0.02) 100%);
+        }
+
+        #map {
+            width: 100%;
+            height: 72vh;
+            min-height: 560px;
+        }
+
+        .map-overlay-note {
+            position: absolute;
+            right: 28px;
+            bottom: 28px;
+            z-index: 1500;
+            background: rgba(7, 25, 69, 0.82);
+            border-radius: 999px;
+            color: #f3f9ff;
+            padding: 12px 18px;
+            font-size: 0.9rem;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+        }
+
+        .ol-control > * {
+            background-color: rgba(255, 255, 255, 0.88) !important;
+            color: #1b3765 !important;
+            border-radius: 14px !important;
+            border: 1px solid rgba(34, 78, 141, 0.12) !important;
+        }
+
+        .ol-control > *:focus,
+        .ol-control > *:hover {
+            background-color: rgba(255, 255, 255, 1) !important;
+        }
+
+        .ol-attribution a,
+        .gcd-gl-input::placeholder,
+        .search-layer-input-search::placeholder {
+            color: #1f3f73 !important;
+        }
+
+        .search-layer-input-search {
+            background-color: rgba(255, 255, 255, 0.96) !important;
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            #map {
+                height: 62vh;
+                min-height: 420px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page-shell {
+                padding: 18px;
+            }
+
+            .hero {
+                gap: 14px;
+            }
+
+            .hero-card {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .map-frame {
+                min-height: 52vh;
+            }
+
+            #map {
+                height: 52vh;
+            }
+        }
+        </style>
+        <title>MAP KELURAHAN SUKUR</title>
+    </head>
+    <body>
+        <div class="page-shell">
+            <header class="hero">
+                <div>
+                    <span class="eyebrow">Peta Interaktif Kelurahan</span>
+                    <h1>MAP KELURAHAN SUKUR</h1>
+                    <p class="hero-copy">Peta interaktif ini menyajikan batas wilayah, fasilitas publik, dan titik penting di Kelurahan Sukur dengan gaya modern dan tampilan visual biru yang kekinian. Nikmati pengalaman eksplorasi data dalam antarmuka web yang bersih, elegan, dan responsif.</p>
+                </div>
+                <div class="hero-card">
+                    <h2>Informasi Peta</h2>
+                    <p>Gunakan kontrol peta, layer switcher, dan fitur pencarian untuk memahami struktur wilayah, jalur akses, dan area penting di Kelurahan Sukur. Desain ini memadukan estetika modern dengan batas peta bergaya bordir ringan.</p>
+                </div>
+            </header>
+
+            <main class="content">
+                <section class="info-panel">
+                    <div class="card">
+                        <h3>Tentang Map</h3>
+                        <p>Map Kelurahan Sukur dibuat untuk memudahkan presentasi dan analisis wilayah. Peta ini cocok untuk perencanaan kawasan, pelaporan publik, dan pemantauan perubahan spasial dengan sentuhan profesional.</p>
+                        <ul>
+                            <li>Warna dasar biru modern</li>
+                            <li>Layout responsif untuk desktop dan mobile</li>
+                            <li>Batas peta dipertegas dengan border halus</li>
+                        </ul>
+                    </div>
+                    <div class="card accent">
+                        <h3>Highlights</h3>
+                        <dl>
+                            <dt>Judul</dt>
+                            <dd>MAP KELURAHAN SUKUR</dd>
+                            <dt>Deskripsi</dt>
+                            <dd>Presentasi peta dengan tema biru, nuansa soft glass, dan penjelasan informatif.</dd>
+                            <dt>Style</dt>
+                            <dd>Modern, tidak monoton, dengan border dan shadow halus.</dd>
+                        </dl>
+                    </div>
+                </section>
+                <section class="map-frame">
+                    <div id="map">
+                        <div id="popup" class="ol-popup">
+                            <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                            <div id="popup-content"></div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+        <script src="resources/qgis2web_expressions.js"></script>
+        <script src="./resources/functions.js"></script>
+        <script src="./resources/ol.js"></script>
+        <script src="./resources/ol-layerswitcher.js"></script>
+        <script src="resources/photon-geocoder-autocomplete.min.js"></script>
+        <script src="layers/SUKUR_1.js"></script>
+        <script src="styles/SUKUR_1_style.js"></script>
+        <script src="./layers/layers.js" type="text/javascript"></script> 
+        <script src="./resources/Autolinker.min.js"></script>
+        <script src="./resources/qgis2web.js"></script>
+    </body>
+</html>
